@@ -3,9 +3,16 @@
 <head>
   <link rel="icon" href="icons8-inventario-100.png" type="image/png">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventario Ruta</title>
   <style>
+    html{
+      margin: 90px;
+      width: 80%;
+    }
+
     body{
+     
       color: white;
       background-color: #086674;
       /* background-image: url("blur.jpg"); */
@@ -174,6 +181,16 @@ button:hover {
 #leyendaBox {
   resize: none; /* evitar que el usuario cambie el tamaño */
   overflow-y: scroll; /* scroll vertical */
+  width: 400px; 
+  height: 265px; 
+  margin-bottom: 20px;
+  margin-left: 30px;
+}
+
+#input{
+  width: 400px; 
+  height: 200px; 
+  margin-bottom: 20px;
 }
 
 .resaltado {
@@ -185,6 +202,25 @@ button:hover {
 .revisado {
   background-color: rgb(47, 148, 47) !important;
   font-weight: bold;
+}
+
+
+@media (max-width: 438px) {
+  #input, #leyendaBox {
+   width: 220px;
+   height: 100px;
+   margin:0;
+   margin-bottom: 10px;
+   padding:0;
+  }
+  button.b{
+  margin: 5px 0px;
+  }
+  div.tabla-container {
+    align-items: center;
+    justify-content: center;
+  }
+
 }
 
 
@@ -224,7 +260,7 @@ button:hover {
   <!-- Contenedor con textarea principal y leyenda lado a lado -->
   <div class="flex-container" style="align-items: center; justify-content: center;">
     <div> 
-      <textarea id="input" rows="10" cols="60" placeholder="Escribe aquí los códigos escaneados..." style="border-radius: 5px;"></textarea><br>
+      <textarea id="input" placeholder="Escribe aquí los códigos escaneados..." style="border-radius: 5px; "></textarea><br>
       <button class="b" onclick="procesar()">Procesar en tabla seleccionada</button>
       <button class="b" onclick="exportarSeleccionadas()">Exportar tablasRuta seleccionadas</button><br><br>
       <button class="b" onclick="exportarTodo()">Exportar todas a Excel</button>
@@ -236,7 +272,7 @@ button:hover {
     <br>
     <div>
       <!-- <label for="leyendaBox"><b>Productos repetidos:</b></label><br> -->
-      <textarea id="leyendaBox" rows="14" cols="62" readonly style="margin-left: 60px; border-radius: 5px; color: rgb(244, 242, 242);"></textarea>
+      <textarea id="leyendaBox" readonly style="border-radius: 5px; color: rgb(244, 242, 242); "></textarea>
     </div>
   </div>
 
@@ -249,13 +285,13 @@ button:hover {
 
 <div id="infoInventario" style="margin-top:20px; text-align:center; display:flex; justify-content:center; gap:20px;">
   <!-- Recuadro verde: fecha actual -->
-  <div style="background-color: rgb(47, 148, 47); padding:10px; border-radius:5px; min-width:250px;">
+  <div style="background-color: rgb(47, 148, 47); padding:10px; border-radius:5px; min-width:180px;">
     <strong>Fecha de modificación actual:</strong> 
     <span id="fechaInventario">--/--/----</span>
   </div>
 
   <!-- Recuadro gris: fecha guardada en LocalStorage -->
-  <div style="background-color: gray; color:white; padding:10px; border-radius:5px; min-width:250px;">
+  <div style="background-color: gray; color:white; padding:10px; border-radius:5px; min-width:180px;">
     <strong>Última fecha guardada:</strong> 
     <span id="fechaGuardada">--/--/----</span>
   </div>
