@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" href="icons8-inventario-100.png" type="image/png">
+  <meta charset="UTF-8">
+  <title>Inventario Ruta</title>
+  <style>
+    body{
+      color: white;
+      background-color: #086674;
+      /* background-image: url("blur.jpg"); */
+      /* background-color: #000000; */
+      /* background-image: url("1.webp"); */
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    hr{
+      color: white;
+    }
+
+    .barraB{
+      position: sticky;
+      top: 5px;
+      z-index: 1000;
+      
+    }
+
+    .barraB input{
+      background-color: #086674;
+      padding: 10px;
+    }
+
+    input, textarea, button{
+  background-color: rgba(255, 255, 255, 0.2); /* blanco con 20% opacidad */
+  border: 1px solid rgba(255, 255, 255, 0.4); /* borde semitransparente */
+  color: #fff; /* texto en blanco para contraste */
+  padding: 6px;
+  border-radius: 6px;
+  outline: none;
+  
+}
+
+textarea, select, button.b{
+  box-shadow: 0 4px 5px rgba(0,0,0,0.60); 
+}
+
+select{
+  background-color: rgba(255, 255, 255, 0.2); /* blanco con 20% opacidad */
+  border: 1px solid rgba(255, 255, 255, 0.4); /* borde semitransparente */
+  color: white;
+  padding: 6px;
+  border-radius: 6px;
+  outline: none;
+}
+
+select option {
+  background-color: rgba(7, 121, 132, 0.5);/* fondo oscuro translúcido */
+  color: black; /* texto futurista */
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6); /* placeholder semitransparente */
+}
+
+
+    input{
+      border: solid 1px;
+    }
+
+    select{
+      border: solid 1px;
+      border-radius: 7px;
+    }
+
+    button{
+      border: solid 1px;
+      border-radius: 10px;
+      
+    }
+
+    /* button:hover{
+      background-color: rgb(20, 148, 97);
+    } */
+
+    /* button.red:hover{
+      background-color: red;
+    } */
+
+
+    button {
+  position: relative;
+  overflow: hidden;
+  border: none;
+  /* padding: 10px 20px; */
+  border-radius: 8px;
+  /* background: #111; */
+  /* color: black; */
+  cursor: pointer;
+  transition: color 0.3s ease;
+  z-index: 1;
+}
+
+button.red::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, #ff1f02, transparent 98%);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, #55ed53, transparent 95%);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+button:hover::before {
+  width: 300%;
+  height: 300%;
+}
+
+button:hover {
+  color: white;
+}
+    
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .tabla-container {
+      /* border: 1px solid rgba(255, 255, 255, 0.075); */
+      border-radius: 10px;
+      padding: 10px;
+      background-color: rgba(209, 205, 205, 0.2);
+      backdrop-filter: blur(1px);
+      box-shadow: 0 4px 5px rgba(0,0,0,0.60); 
+    }
+
+    .tabla-container table {
+  margin: auto;            /* asegura que se centre dentro del contenedor */
+  border-collapse: collapse;
+  
+}
+
+.duplicado {
+  background-color: rgb(182, 242, 53);
+}
+.flex-container {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+.flex-nav{
+  display: flex;
+
+}
+#leyendaBox {
+  resize: none; /* evitar que el usuario cambie el tamaño */
+  overflow-y: scroll; /* scroll vertical */
+}
+
+.resaltado {
+  background-color: purple !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.revisado {
+  background-color: rgb(47, 148, 47) !important;
+  font-weight: bold;
+}
+
+
+    
+  </style>
+</head>
+<nav>
+  <div class="flex-nav" style="align-items: center; justify-content: center;">
+    <H1 style="padding-right: 15px;">DATA</H1>
+    <img src="icons8-inventario-100.png" alt="" style="width: 70px; height: 60px;">
+    <H1 style="padding-left: 15px;">STOCK</H1>
+  </div>
+  
+</nav>
+<body>
+  <hr style="border: 1px solid; margin: 10px 0px;"> 
+  <h2 style="text-transform: uppercase; text-align: center; margin-top: 70px; margin-bottom: 40px;">Inventarios por mueble</h2>
+  <!-- <hr style="border: 1px solid; margin: 10px 0px;">  -->
+   <!-- 🔥 Nuevo: selector de almacén -->
+  <div class="flex-container" style="align-items: center; justify-content: center;">
+    <label for="almacenSelector"><b>Selecciona almacén:</b></label>
+    <select id="almacenSelector" onchange="cambiarAlmacen()" style="margin-left:10px;">
+      <option value="tablasRuta">Ruta Tizayuca</option>
+      <option value="tablasRuta_pachuca">Ruta Pachuca</option>
+
+    </select>
+  </div>
+
+
+  <div class="flex-container" style="align-items: center; justify-content: center;">
+    <input type="text" id="nombreTabla" placeholder="Nombre del mueble" style="border-radius: 3px;">
+    <button class="b" onclick="crearTabla()" >Crear nueva tabla</button>
+  </div>
+  
+  <br><br>
+
+  <!-- Contenedor con textarea principal y leyenda lado a lado -->
+  <div class="flex-container" style="align-items: center; justify-content: center;">
+    <div> 
+      <textarea id="input" rows="10" cols="60" placeholder="Escribe aquí los códigos escaneados..." style="border-radius: 5px;"></textarea><br>
+      <button class="b" onclick="procesar()">Procesar en tabla seleccionada</button>
+      <button class="b" onclick="exportarSeleccionadas()">Exportar tablasRuta seleccionadas</button><br><br>
+      <button class="b" onclick="exportarTodo()">Exportar todas a Excel</button>
+      <button class="b" onclick="subirExcel()">Subir Excel a tabla seleccionada</button>
+      <input type="file" id="excelFile" style="display:none" accept=".xlsx,.xls">
+
+      <!-- <button onclick="resetInventario()" style="border-radius: 5px;">Reiniciar todo</button> -->
+    </div>
+    <br>
+    <div>
+      <!-- <label for="leyendaBox"><b>Productos repetidos:</b></label><br> -->
+      <textarea id="leyendaBox" rows="14" cols="62" readonly style="margin-left: 60px; border-radius: 5px; color: rgb(244, 242, 242);"></textarea>
+    </div>
+  </div>
+
+
+
+
+<hr style="border: 1px solid; margin: 40px 0px;">
+
+  <h3 style="text-transform: uppercase; text-align: center;">TablasRuta guardadas:</h3>
+
+<div id="infoInventario" style="margin-top:20px; text-align:center; display:flex; justify-content:center; gap:20px;">
+  <!-- Recuadro verde: fecha actual -->
+  <div style="background-color: rgb(47, 148, 47); padding:10px; border-radius:5px; min-width:250px;">
+    <strong>Fecha de modificación actual:</strong> 
+    <span id="fechaInventario">--/--/----</span>
+  </div>
+
+  <!-- Recuadro gris: fecha guardada en LocalStorage -->
+  <div style="background-color: gray; color:white; padding:10px; border-radius:5px; min-width:250px;">
+    <strong>Última fecha guardada:</strong> 
+    <span id="fechaGuardada">--/--/----</span>
+  </div>
+</div>
+
+<!-- Botón para limpiar solo el subrayado -->
+<div style="text-align:center; margin-top:15px;">
+  <button onclick="resetRevisados()" style="padding:8px; border-radius:5px;">DESMARCAR LO SUBRAYADO</button>
+</div>
+
+
+
+
+
+<hr style="border: 1px solid; margin: 20px 0px;">
+<div class="barraB" style="text-align:center; margin:15px;">
+  <input type="text" id="buscadorCodigo" placeholder="Buscar producto por código..." 
+         onkeyup="buscarCodigo()" autocomplete="off" style="width:50%; padding:5px; border-radius:5px;">
+</div>
+  <div class="grid" id="contenedorTablasRuta"></div>
+
+<div class="flex-container" style="align-items: center; justify-content: center; margin: 50px; border: 1px solid; padding: 10px;">
+  <H4>INVENTARIO RUTA</H4>
+<!-- <div style="border: 1px solid gray; height: 123px; width: 550px;">
+    <input type="file" id="ventasFile" accept=".csv,.xlsx" style="padding: 53px;">
+    <button onclick="importarVentas()" style="border-radius:5px;">Importar ventas</button>  
+</div>
+
+<div>
+
+<textarea id="reporteVentas" rows="9" cols="63" readonly style="border-radius:5px; color:rgb(129,128,128); margin-top:10px;"></textarea>
+</div> -->
+
+<!-- <input type="file" id="existenciasFile" accept=".csv,.xlsx" style="margin:10px; border-radius: 7px; padding: 5px;">
+<button onclick="compararExistencias()" style="border-radius:5px; padding: 5px;">Comparar existencias finales</button>
+
+</div>
+
+<hr style="border: 1px solid; margin: 20px 0px;">
+<h3 style="text-align:center; margin-top:20px;">Reporte de diferencias</h3>
+<hr  style="border: 1px solid; margin: 20px 0px;">
+
+<div class="barraB" style="text-align:center; margin:15px;">
+  <input type="text" id="searchDiferencias" 
+   placeholder="Buscar en diferencias..." 
+   onkeyup="buscarDif()" autocomplete="off" 
+   style="width:50%; padding:5px; border-radius:5px;">
+</div>
+
+
+
+
+
+<div id="reporteDiferencias"></div> -->
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+  let tablasRuta = [];
+  let tablaSRutaeleccionada = null;
+  let storageKey1 = "tablasRuta"; // por defecto almacén general
+
+  window.onload = function() {
+    const guardado = localStorage.getItem(storageKey1);
+    if (guardado) {
+      tablasRuta = JSON.parse(guardado);
+      mostrarTablasRuta();
+    }
+  };
+
+  function cambiarAlmacen() {
+    storageKey1 = document.getElementById("almacenSelector").value;
+    const guardado = localStorage.getItem(storageKey1);
+    tablasRuta = guardado ? JSON.parse(guardado) : [];
+    mostrarTablasRuta();
+  }
+
+  function crearTabla() {
+    const nombre = document.getElementById("nombreTabla").value.trim();
+    if (!nombre) {
+      alert("Debes poner un nombre para la tabla");
+      return;
+    }
+    const nueva = { nombre: nombre, inventario: {} };
+    tablasRuta.push(nueva);
+    tablaSRutaeleccionada = nueva;
+    guardar();
+    mostrarTablasRuta();
+    document.getElementById("nombreTabla").value = "";
+  }
+
+ 
+
+
+function procesar() {
+  if (!tablaSRutaeleccionada) {
+    alert("Selecciona una tabla primero");
+    return;
+  }
+  const texto = document.getElementById("input").value.trim();
+  const lineas = texto.split("\n");
+
+  lineas.forEach(linea => {
+    const partes = linea.split(";");
+    if (partes.length === 2) {
+      const codigo = partes[0].trim();
+      const cantidad = parseInt(partes[1].trim());
+      if (!isNaN(cantidad)) {
+        tablaSRutaeleccionada.inventario[codigo] =
+          (tablaSRutaeleccionada.inventario[codigo] || 0) + cantidad;
+        marcarPorCodigo(codigo);   // ✅ marca automático
+      }
+    }
+  });
+
+  document.getElementById("input").value = "";
+  guardar();
+  mostrarTablasRuta();
+  restaurarRevisados();          // ✅ restaura todos los anteriores
+}
+
+  function mostrarTablasRuta() {
+    const contenedor = document.getElementById("contenedorTablasRuta");
+    contenedor.innerHTML = "";
+    const repetidos = {};
+
+    // detectar duplicados
+    tablasRuta.forEach((tabla, idx) => {
+      for (const codigo in tabla.inventario) {
+        if (!repetidos[codigo]) repetidos[codigo] = [];
+        repetidos[codigo].push({ tabla: tabla.nombre, cantidad: tabla.inventario[codigo], index: idx });
+      }
+    });
+
+    // mostrar tablasRuta
+    tablasRuta.forEach((tabla, idx) => {
+      const div = document.createElement("div");
+      div.className = "tabla-container";
+      div.innerHTML = `
+        <h4 onclick="seleccionarTabla(${idx})" style="text-align:center; font-size:20px; text-transform:uppercase;">
+          <input type="checkbox" class="tabla-check" value="${idx}">
+          ${tabla.nombre}
+          </h4>
+        <button style="margin-left: 70px; margin-bottom: 20px;" class="red" onclick="borrarTabla(${idx})">Borrar esta tabla</button>
+        <button onclick="renombrarTabla(${idx})">Renombrar tabla</button>
+        
+   
+
+
+      `;
+      const t = document.createElement("table");
+      t.border = "1";
+      t.innerHTML = "<tr><th>Código</th><th>Cantidad</th><th>Acción</th></tr>";
+      for (const codigo in tabla.inventario) {
+        const fila = t.insertRow();
+        fila.insertCell().textContent = codigo;
+        fila.insertCell().textContent = tabla.inventario[codigo];
+        const accion = fila.insertCell();
+        accion.innerHTML = `
+          <button class="red" onclick="eliminar(${idx}, '${codigo}')">Eliminar</button>
+          <button onclick="mover(${idx}, '${codigo}')">Mover</button>
+        `;
+        if (repetidos[codigo].length > 1) {
+          fila.className = "duplicado";
+        }
+      }
+      div.appendChild(t);
+      contenedor.appendChild(div);
+    });
+
+    // mostrar leyenda en textarea
+    const leyendaBox = document.getElementById("leyendaBox");
+    let texto = "";
+    for (const codigo in repetidos) {
+      if (repetidos[codigo].length > 1) {
+        const total = repetidos[codigo].reduce((acc, r) => acc + r.cantidad, 0);
+        const detalle = repetidos[codigo]
+          .map(r => `En ${r.tabla} hay ${r.cantidad} piezas`)
+          .join(" | ");
+        texto += `${codigo}: ${detalle} → TOTAL: ${total} piezas\n`;
+      }
+    }
+    leyendaBox.value = texto || "No hay productos repetidos";
+  }
+
+
+  //BUSCAR POR CODIGO
+  function buscarCodigo() {
+  const codigoBuscado = document.getElementById("buscadorCodigo").value.trim().toLowerCase();
+  const contenedor = document.getElementById("contenedorTablasRuta");
+  const tablasRutaDiv = contenedor.getElementsByClassName("tabla-container");
+  // variable para controlar el scroll
+  let primerElementoEncontrado = null;
+
+  // limpiar resaltados previos
+  Array.from(tablasRutaDiv).forEach(div => {
+    const filas = div.querySelectorAll("tr");
+    filas.forEach(fila => fila.style.backgroundColor = "");
+  });
+
+  if (codigoBuscado === "") return;
+
+  // recorrer todas las tablasRuta
+  Array.from(tablasRutaDiv).forEach(div => {
+    const filas = div.querySelectorAll("tr");
+    filas.forEach(fila => {
+      const celdas = fila.querySelectorAll("td");
+      if (celdas.length > 0) {
+        const codigo = celdas[0].textContent.trim().toLowerCase();
+        if (codigo.includes(codigoBuscado)) {
+          // marcar con color temporal
+          fila.style.backgroundColor = "purple";
+
+          // GUARDA EL PRIMER RESULTADO PARA EL SCROLL
+          if (!primerElementoEncontrado){
+            primerElementoEncontrado = fila;
+          }
+
+          // quitar el color después de unos segundos
+          setTimeout(() => {
+            fila.style.backgroundColor = "";
+          }, 10000);
+        }
+      }
+    });
+  });
+
+  //ejecutar el salto al finalizar el recorrido
+  if (primerElementoEncontrado){
+    primerElementoEncontrado.scrollIntoView({
+      behavior: 'smooth', //movimiento fluido
+      block: 'center' //lo deja en el centro de la pantalla
+
+    });
+  }
+}
+  //BUSCAR POR CODIGO
+
+  //BUSCAR POR DIFERENCIA
+
+let timeoutId; // para debounce
+
+function buscarDif() {
+  clearTimeout(timeoutId);
+  timeoutId = setTimeout(() => {
+    ejecutarBusquedaDif();
+  }, 2000); // espera 2000ms antes de ejecutar
+}
+
+function ejecutarBusquedaDif() {
+  const barraDif = document.getElementById("searchDiferencias");
+  const filtro = barraDif.value.toLowerCase();
+  const tabla = document.querySelector("#reporteDiferencias table");
+  if (!tabla) return;
+
+  const filas = tabla.getElementsByTagName("tr");
+  let primeraCoincidencia = null;
+
+  for (let i = 1; i < filas.length; i++) { // saltar encabezado
+    // 🔑 buscar solo en la primera celda (código)
+    const codigoCelda = filas[i].cells[0]?.innerText.toLowerCase() || "";
+
+    // limpiar resaltado previo
+    filas[i].classList.remove("resaltado");
+
+    if (filtro && codigoCelda.includes(filtro)) {
+      filas[i].classList.add("resaltado");
+
+      if (!primeraCoincidencia) {
+        primeraCoincidencia = filas[i];
+      }
+    }
+  }
+
+  // autoscroll a la primera coincidencia
+  if (primeraCoincidencia) {
+    primeraCoincidencia.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+
+
+  //BUSCAR POR DIFERENCIA
+
+
+
+  ///////////////
+  function renombrarTabla(index) {
+  const nuevoNombre = prompt("Escribe el nuevo nombre para la tabla:", tablasRuta[index].nombre);
+  if (nuevoNombre && nuevoNombre.trim() !== "") {
+    tablasRuta[index].nombre = nuevoNombre.trim();
+    guardar();
+    mostrarTablasRuta();
+    if (tablaSRutaeleccionada === tablasRuta[index]) {
+      tablaSRutaeleccionada = tablasRuta[index]; // actualizar referencia si estaba seleccionada
+    }
+  }
+}
+  ///////////////
+
+  function seleccionarTabla(index) {
+    tablaSRutaeleccionada = tablasRuta[index];
+    alert("Tabla seleccionada: " + tablaSRutaeleccionada.nombre);
+  }
+
+  // 🔥 Nuevo: eliminar por pieza
+function eliminar(idx, codigo) {
+  const cantidadActual = tablasRuta[idx].inventario[codigo];
+  const cantidadEliminar = parseInt(prompt(`¿Cuántas piezas de ${codigo} quieres eliminar? (Actual: ${cantidadActual})`));
+  if (!isNaN(cantidadEliminar) && cantidadEliminar > 0) {
+    if (cantidadEliminar >= cantidadActual) {
+      delete tablasRuta[idx].inventario[codigo];
+    } else {
+      tablasRuta[idx].inventario[codigo] -= cantidadEliminar;
+    }
+    guardar();
+    mostrarTablasRuta();
+    marcarPorCodigo(codigo);   // ✅ marca automático
+    restaurarRevisados();      // ✅ restaura todos los anteriores
+  }
+}
+
+  function mover(idx, codigo) {
+    const destino = prompt("¿A qué tabla quieres mover " + codigo + "? (escribe el nombre exacto)");
+    const tablaDestino = tablasRuta.find(t => t.nombre === destino);
+    if (tablaDestino) {
+      const cantidad = tablasRuta[idx].inventario[codigo];
+      tablaDestino.inventario[codigo] = (tablaDestino.inventario[codigo] || 0) + cantidad;
+      delete tablasRuta[idx].inventario[codigo];
+      guardar();
+      mostrarTablasRuta();
+    } else {
+      alert("No existe la tabla destino");
+    }
+  }
+
+
+  function exportarTodo() {
+  const hoja = XLSX.utils.aoa_to_sheet([]);
+  const colStep = 3; // separación entre columnas
+  let colOffset = 0; // acumulador de columnas
+
+  tablasRuta.forEach((tabla) => {
+    // título
+    XLSX.utils.sheet_add_aoa(hoja, [[tabla.nombre]], { origin: { r: 0, c: colOffset } });
+    // encabezados
+    XLSX.utils.sheet_add_aoa(hoja, [["Código", "Cantidad"]], { origin: { r: 1, c: colOffset } });
+
+    // inventario
+    let fila = 2;
+    for (const codigo in tabla.inventario) {
+      XLSX.utils.sheet_add_aoa(hoja, [[codigo, tabla.inventario[codigo]]], { origin: { r: fila, c: colOffset } });
+      fila++;
+    }
+
+    // avanzar columnas para la siguiente tabla
+    colOffset += colStep;
+  });
+
+  const libro = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(libro, hoja, "Inventarios");
+  XLSX.writeFile(libro, "inventarios.xlsx");
+}
+
+ 
+
+function compararExistencias() {
+  const fileInput = document.getElementById("existenciasFile");
+  const file = fileInput.files[0];
+  if (!file) {
+    alert("Selecciona un archivo de existencias primero");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+
+    // Tomamos la primera hoja
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const existencias = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+    // 🔑 Detectar fila de encabezados
+    let filaEncabezados = existencias.findIndex(fila =>
+      fila.some(celda => {
+        const texto = celda?.toString().trim().toLowerCase();
+        return texto && (texto.includes("codigo") || texto.includes("código") || texto.includes("cod") ||
+                         texto.includes("existencia") || texto.includes("stock") || texto.includes("final") ||
+                         texto.includes("descripcion") || texto.includes("descripción"));
+      })
+    );
+
+    if (filaEncabezados === -1) {
+      alert("No se encontraron encabezados de código/existencias en el archivo");
+      return;
+    }
+
+    const encabezados = existencias[filaEncabezados].map(h => h?.toString().trim().toLowerCase());
+
+    function buscarColumna(posiblesNombres) {
+      return encabezados.findIndex(h =>
+        posiblesNombres.some(nombre => h.includes(nombre))
+      );
+    }
+
+    const colCodigo = buscarColumna(["codigo", "código", "cod"]);
+    const colExistencias = buscarColumna(["existencia", "stock", "final"]);
+    const colDescripcion = buscarColumna(["descripcion", "descripción"]);
+
+    if (colCodigo === -1 || colExistencias === -1) {
+      alert("No se encontraron columnas de código y existencias");
+      return;
+    }
+
+    // 🔑 Comparar contra todas las tablasRuta
+    let reporteHTML = "<table border='1' style='width:90%; margin:auto; text-align:center;'>";
+    reporteHTML += "<tr><th>Código</th><th>Descripción</th><th>Inventario registrado</th><th>Existencia Sistema</th><th>Diferencia</th></tr>";
+
+    for (let i = filaEncabezados + 1; i < existencias.length; i++) {
+      const fila = existencias[i];
+      const codigo = fila[colCodigo]?.toString().trim();
+      const existenciaFinal = parseInt(fila[colExistencias]);
+      const descripcion = colDescripcion !== -1 ? fila[colDescripcion] : "";
+
+      if (codigo && !isNaN(existenciaFinal)) {
+        // sumar inventario de todas las tablasRuta
+        let inventarioRegistrado = 0;
+        tablasRuta.forEach(tabla => {
+          if (tabla.inventario[codigo]) {
+            inventarioRegistrado += tabla.inventario[codigo];
+          }
+        });
+
+        const diferencia = existenciaFinal - inventarioRegistrado;
+        let color = "black";
+        if (diferencia < 0) color = "orange";
+        else if (diferencia > 0) color = "red";
+        else color = "white";
+
+         
+        reporteHTML += `<tr>
+          <td>${codigo}</td>
+          <td>${descripcion || "Sin descripción"}</td>
+          <td>${inventarioRegistrado}</td>
+          <td>${existenciaFinal}</td>
+          <td style="color:${color}; font-weight:bold;">${diferencia}</td>
+        </tr>`;
+      }
+    }
+
+    reporteHTML += "</table>";
+    document.getElementById("reporteDiferencias").innerHTML = reporteHTML;
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
+
+  /////////////
+
+  ////////////////////////////////
+
+  function exportarSeleccionadas() {
+  const seleccionadas = Array.from(document.querySelectorAll(".tabla-check:checked"))
+    .map(chk => parseInt(chk.value));
+
+  if (seleccionadas.length === 0) {
+    alert("Selecciona al menos una tabla para exportar");
+    return;
+  }
+
+  const hoja = {};
+  const colStep = 3;
+  const extraSpace = 2;
+
+  seleccionadas.forEach((idx, pos) => {
+    const tabla = tablasRuta[idx];
+    const colOffset = (pos % 3) * colStep;
+    const numFilas = Object.keys(tabla.inventario).length + 2;
+    const rowOffset = Math.floor(pos / 3) * (numFilas + extraSpace);
+
+    XLSX.utils.sheet_add_aoa(hoja, [[tabla.nombre]], { origin: { r: rowOffset, c: colOffset } });
+    XLSX.utils.sheet_add_aoa(hoja, [["Código", "Cantidad"]], { origin: { r: rowOffset + 1, c: colOffset } });
+
+    let fila = rowOffset + 2;
+    for (const codigo in tabla.inventario) {
+      XLSX.utils.sheet_add_aoa(hoja, [[codigo, tabla.inventario[codigo]]], { origin: { r: fila, c: colOffset } });
+      fila++;
+    }
+  });
+
+  const libro = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(libro, hoja, "Inventarios Seleccionados");
+  XLSX.writeFile(libro, "inventarios_seleccionados.xlsx");
+}
+
+  ////////////////////////////////
+
+  function resetInventario() {
+    tablasRuta = [];
+    localStorage.removeItem(storageKey1);
+    mostrarTablasRuta();
+  }
+
+  function borrarTabla(index) {
+    if (confirm("¿Seguro que quieres borrar la tabla '" + tablasRuta[index].nombre + "'?")) {
+      tablasRuta.splice(index, 1);
+      guardar();
+      mostrarTablasRuta();
+      if (tablaSRutaeleccionada === tablasRuta[index]) {
+        tablaSRutaeleccionada = null;
+      }
+    }
+  }
+
+  //REVISADOS
+
+// Marca un código y lo guarda en LocalStorage
+function marcarPorCodigo(codigo) {
+  const filas = document.querySelectorAll("#contenedorTablasRuta tr");
+  filas.forEach(fila => {
+    const celdaCodigo = fila.cells[0]?.innerText.trim();
+    if (celdaCodigo === codigo) {
+      fila.classList.add("revisado");
+    }
+  });
+
+  // Actualizar fecha
+  const fecha = new Date();
+  const fechaTexto = fecha.toLocaleString("es-MX");
+  document.getElementById("fechaInventario").innerText = fechaTexto;
+  localStorage.setItem("ultimaFechaInventario", fechaTexto);
+  document.getElementById("fechaGuardada").innerText = fechaTexto;
+
+  // Guardar lista de códigos revisados
+  let revisados = JSON.parse(localStorage.getItem("codigosRevisados") || "[]");
+  if (!revisados.includes(codigo)) {
+    revisados.push(codigo);
+    localStorage.setItem("codigosRevisados", JSON.stringify(revisados));
+  }
+}
+
+// Restaura todos los códigos guardados en LocalStorage
+function restaurarRevisados() {
+  const revisados = JSON.parse(localStorage.getItem("codigosRevisados") || "[]");
+  const filas = document.querySelectorAll("#contenedorTablasRuta tr");
+  filas.forEach(fila => {
+    const celdaCodigo = fila.cells[0]?.innerText.trim();
+    if (revisados.includes(celdaCodigo)) {
+      fila.classList.add("revisado");
+    }
+  });
+}
+
+// Quita todos los verdes pero NO borra datos ni fecha
+function resetRevisados() {
+  const filas = document.querySelectorAll("#contenedorTablasRuta tr.revisado");
+  filas.forEach(fila => fila.classList.remove("revisado"));
+
+  // Limpiar lista de códigos, NO inventario ni fecha
+  localStorage.removeItem("codigosRevisados");
+
+  // El recuadro verde se limpia porque es temporal
+  document.getElementById("fechaInventario").innerText = "--/--/----";
+  // El recuadro gris sigue mostrando la última fecha guardada
+}
+
+// Activa el clic manual y restaura al cargar
+function activarMarcadoInventario() {
+  const contenedor = document.getElementById("contenedorTablasRuta");
+
+  // Clic manual en fila
+  contenedor.addEventListener("click", function(e) {
+    const fila = e.target.closest("tr");
+    if (fila && fila.parentNode && fila.rowIndex > 0) {
+      const codigo = fila.cells[0]?.innerText.trim();
+      if (codigo) {
+        marcarPorCodigo(codigo);
+      }
+    }
+  });
+
+  // Restaurar al cargar
+  const fechaGuardada = localStorage.getItem("ultimaFechaInventario");
+  if (fechaGuardada) {
+    document.getElementById("fechaGuardada").innerText = fechaGuardada;
+  }
+  restaurarRevisados();
+}
+
+window.addEventListener("DOMContentLoaded", activarMarcadoInventario);
+
+//importar
+// Función para abrir el selector
+function subirExcel() {
+  if (!tablaSRutaeleccionada) {
+    alert("Selecciona una tabla primero");
+    return;
+  }
+  document.getElementById("excelFile").click();
+}
+
+// Leer el archivo cuando se selecciona
+document.getElementById("excelFile").addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+
+    // Tomar la primera hoja
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    // Recorrer filas
+    rows.forEach(row => {
+  const codigo = row[0];   // Columna A → código
+  const piezas = parseInt(row[2]); // Columna C → cantidad
+  // Columna B (descripcion) se ignora
+
+  if (codigo && !isNaN(piezas)) {
+    tablaSRutaeleccionada.inventario[codigo] =
+      (tablaSRutaeleccionada.inventario[codigo] || 0) + piezas;
+  }
+});
+
+
+
+    guardar();
+    mostrarTablasRuta();
+    restaurarRevisados();
+    alert("Datos cargados desde Excel");
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+//importar
+
+
+  //REVISADOS
+
+  function guardar() {
+    localStorage.setItem(storageKey1, JSON.stringify(tablasRuta));
+  }
+
+</script>
+</body>
+</html>
